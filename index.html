@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seringal Lab - Galeria Interativa</title>
+
+    <!-- <base href="/expojud/2025/"> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .font-sans { font-family: 'Inter', sans-serif; }
+        
+        .slide-bg {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: opacity 1s ease-in-out;
+        }
+        
+        .content-slide {
+            opacity: 0;
+            transition: opacity 0.8s ease-out;
+        }
+        
+        .content-slide.active {
+            opacity: 1;
+        }
+        
+        .image-card {
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            border-radius: 20px;
+            overflow: hidden;
+            width: 120px;
+            height: 150px;
+            border: 2px solid transparent;
+            flex-shrink: 0;
+        }
+
+        .image-card.active {
+            width: 150px;
+            height: 190px;
+            border: 3px solid #b9e62f;
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .image-card.inactive {
+            opacity: 0.7;
+            transform: scale(0.95);
+        }
+
+        .image-card:hover {
+            transform: scale(1.08);
+            z-index: 20;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (min-width: 768px) {
+            .image-card {
+                width: 140px;
+                height: 180px;
+            }
+
+            .image-card.active {
+                width: 180px;
+                height: 230px;
+                transform: scale(1.05);
+            }
+
+            .image-card:hover {
+                transform: scale(1.12);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .image-card {
+                width: 160px;
+                height: 200px;
+            }
+
+            .image-card.active {
+                width: 200px;
+                height: 250px;
+                transform: scale(1.1);
+            }
+        }
+        
+        .indicator {
+            transition: all 0.4s ease;
+            width: 8px;
+            height: 8px;
+        }
+        
+        .indicator.active {
+            width: 32px;
+            border-radius: 12px;
+        }
+        
+        .nav-hover:hover {
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .overlay-dark {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.2) 100%);
+        }
+        
+        .btn-dynamic {
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-dynamic:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: flex-start;
+            perspective: 1000px;
+            overflow-x: auto;
+            padding: 20px 40px;
+            max-width: 100%;
+            width: 100%;
+            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+        }
+
+        @media (min-width: 768px) {
+            .card-container {
+                padding: 20px 140px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .card-container {
+                gap: 15px;
+                padding: 20px 225px;
+                max-width: 650px;
+            }
+        }
+        
+        .card-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .card-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        
+        .card-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+        
+        .card-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .main-content {
+            max-width: 500px;
+        }
+        
+        /*
+        @media (min-width: 1024px) and (max-width: 1440px) {
+            .slide-title {
+                font-size: clamp(2.2rem, 5vw, 3.2rem);
+            }
+            .slide-description {
+                font-size: 1rem;
+                margin-bottom: 24px;
+            }
+            .main-content {
+                max-width: 420px;
+            }
+        }
+        */
+
+        @media (min-width: 1024px) {
+            .slide-title { font-size: clamp(2.5rem, 4vw, 3.5rem); }
+            .slide-description { font-size: 1.1rem; }
+            .main-content { max-width: 450px; }
+        }
+
+        @media (min-width: 1440px) {
+            .slide-title { font-size: clamp(3.5rem, 5vw, 4.5rem); }
+            .main-content { max-width: 500px; }
+        }
+        
+        .slide-title {
+            font-size: clamp(2rem, 6vw, 3rem);
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        
+        .slide-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 28px;
+            opacity: 0.9;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-out;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            max-width: 900px;
+            width: 90%;
+            padding: 1.5rem;
+            transform: scale(0.95);
+            transition: transform 0.3s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+        .modal-content::-webkit-scrollbar {
+            display: none; /* Safari and Chrome */
+        }
+        @media (min-width: 768px) {
+            .modal-content {
+                padding: 2.5rem;
+            }
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+            animation: modal-enter 250ms ease-out;
+        }
+
+        @keyframes modal-enter {
+            from { opacity: 0; transform: translateY(8px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Imagem do modal responsiva */
+        #modal-image {
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            #modal-image { max-height: 70vh; }
+        }
+
+        /* Otimizações Mobile */
+        @media (max-width: 768px) {
+            /* Header compacto */
+            header {
+                padding: 1rem 1.5rem !important;
+            }
+
+            header img {
+                height: 1.75rem !important;
+            }
+
+            /* Layout principal otimizado */
+            .slide-title {
+                font-size: clamp(1.75rem, 8vw, 2.25rem) !important;
+                line-height: 1.2 !important;
+                margin-bottom: 1rem !important;
+            }
+
+            .slide-description {
+                font-size: 0.9rem !important;
+                line-height: 1.4 !important;
+                margin-bottom: 1.5rem !important;
+            }
+
+            /* Indicadores maiores para toque */
+            .indicator {
+                width: 12px !important;
+                height: 12px !important;
+                margin: 0 6px;
+            }
+
+            .indicator.active {
+                width: 24px !important;
+            }
+
+            /* Botões com área de toque adequada */
+            .btn-dynamic {
+                min-height: 44px !important;
+                padding: 0.75rem 1.5rem !important;
+                font-size: 0.9rem !important;
+            }
+
+            /* Footer compacto */
+            footer {
+                padding: 0.75rem 1rem !important;
+            }
+
+            footer p {
+                font-size: 0.75rem !important;
+            }
+
+            /* Menu mobile com botões maiores */
+            #mobile-contact-btn,
+            #mobile-menu-content a {
+                min-height: 44px !important;
+                padding: 1rem !important;
+            }
+
+            /* Animações otimizadas */
+            .image-card {
+                transition: transform 0.3s ease !important;
+            }
+
+            .image-card:hover {
+                transform: scale(1.02) !important;
+            }
+
+            .image-card.active:hover {
+                transform: scale(1.05) !important;
+            }
+        }
+
+        /* Redução de movimento para performance */
+        @media (prefers-reduced-motion: reduce) {
+            .image-card,
+            .content-slide,
+            .modal-content {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+
+        /* Otimização para conexões lentas */
+        @media (max-width: 768px) and (prefers-reduced-data: reduce) {
+            .slide-bg video {
+                display: none;
+            }
+        }
+
+        .finalist-tag {
+            background: linear-gradient(145deg, #ffd700, #f0c000);
+            color: #4a2c00;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+            border: 1px solid #fff2a8;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3); }
+            to { box-shadow: 0 4px 16px rgba(255, 215, 0, 0.6); }
+        }
+
+        .active-filter-btn {
+            background: linear-gradient(145deg, #ffd700, #f0c000);
+            border-color: #fff2a8;
+        }
+
+        .active-filter-btn > .relative.z-10 {
+            color: #4a2c00;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="font-sans bg-black overflow-hidden">
+    <!-- Fundo Principal com Slide -->
+    <div id="background-a" class="slide-bg fixed inset-0 z-0"></div>
+    <div id="background-b" class="slide-bg fixed inset-0 z-0" style="opacity: 0;"></div>
+    <div class="overlay-dark fixed inset-0 z-10"></div>
+    <div class="fixed bottom-0 left-0 w-full h-64 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none"></div>
+    
+    <!-- Header -->
+    <header class="relative z-30 flex justify-between items-center p-6 lg:p-8">
+        <div class="flex items-center gap-4 flex-shrink-0">
+            <img src="assets/logo_mpac_seringal-01.svg" alt="Logo Seringal Lab" class="h-14 lg:h-20" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); max-width: 460px;">
+        </div>
+
+        <!-- Desktop Search Bar -->
+        <div class="hidden md:flex flex-grow justify-center px-8">
+            <div class="relative w-full max-w-md">
+                <input type="text" id="search-input" placeholder="Buscar por título ou categoria..." class="w-full bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-white/60 px-6 py-2 rounded-full focus:outline-none focus:ring-2 focus:ring-white/50 transition-all">
+                <button id="search-btn" class="absolute top-1/2 right-4 -translate-y-1/2 text-white/60 hover:text-white transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+        <!-- Selo Prêmio J.Ex -->
+        <div class="hidden md:flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 backdrop-blur-md border-2 border-yellow-500/40 px-4 py-2 rounded-lg shadow-lg">
+            <span class="text-2xl">🏆</span>
+            <div class="flex flex-col">
+                <span class="text-yellow-400 text-xs font-semibold tracking-wide">FINALISTA</span>
+                <span class="text-white text-xs font-medium">Prêmio J.Ex</span>
+            </div>
+        </div>
+
+        <nav class="hidden md:flex space-x-4 flex-shrink-0">
+            <a href="#" id="contact-btn" class="relative group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-2 rounded-full font-medium">
+                <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+                <span class="relative z-10">Contato</span>
+            </a>
+        </nav>
+    
+            <!-- Mobile Search Icon -->
+            <button id="mobile-search-open-btn" class="md:hidden text-white p-2 z-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </button>
+    
+            <!-- Hamburger Button -->
+            <div class="md:hidden flex items-center">
+                <button id="hamburger-btn" class="text-white focus:outline-none z-50">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Search Overlay -->
+    <div id="mobile-search-overlay" class="hidden fixed inset-0 bg-black/95 z-50 p-4 pt-6 flex flex-col items-center transition-opacity duration-300 ease-in-out">
+        <button id="mobile-search-close-btn" class="absolute top-6 right-6 text-white">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="w-full max-w-md mt-16">
+            <div class="relative">
+                <input type="text" id="mobile-search-input" placeholder="Buscar por título ou categoria..." class="w-full bg-white/10 border border-white/20 text-white px-6 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-white/50">
+                <button id="mobile-search-execute-btn" class="absolute top-1/2 right-4 -translate-y-1/2 text-white/60">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Menu Modal -->
+    <div id="mobile-menu-overlay" class="modal-overlay md:hidden">
+        <div id="mobile-menu-content" class="modal-content max-w-sm" role="dialog" aria-modal="true">
+            <div class="text-white">
+                <h2 class="text-2xl font-serif font-bold mb-8 text-center">Menu</h2>
+
+                <!-- Menu Principal -->
+                <div id="mobile-main-menu" class="space-y-4">
+                    <button id="mobile-contact-btn" class="w-full flex items-center justify-between p-4 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                        <span class="text-lg font-medium">Contato</span>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Submenu de Contato -->
+                <div id="mobile-contact-menu" class="hidden">
+                    <!-- Breadcrumb -->
+                    <div class="flex items-center mb-4 text-sm">
+                        <span class="text-white/60">Menu</span>
+                        <svg class="w-4 h-4 mx-2 text-white/40" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-white">Contato</span>
+                    </div>
+
+                    <div class="flex items-center mb-6">
+                        <button id="mobile-back-btn" class="p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 mr-3">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                        <h3 class="text-xl font-serif font-bold">Contatos MPAC</h3>
+                    </div>
+
+                    <!-- Links Principais -->
+                    <div class="mb-6">
+                        <h4 class="font-bold text-base mb-3 text-red-400">Links Principais</h4>
+                        <a href="https://www.mpac.mp.br/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20 mb-2">
+                            <div class="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm">MPAC - Site Oficial</span>
+                        </a>
+                    </div>
+
+                    <!-- Redes Sociais -->
+                    <div class="mb-6">
+                        <h4 class="font-bold text-base mb-3 text-red-400">Redes Sociais</h4>
+                        <div class="space-y-2">
+                            <a href="https://www.instagram.com/mpacre/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                                <div class="w-6 h-6 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-sm">Instagram MPAC</span>
+                            </a>
+                            <a href="https://www.youtube.com/mpacre" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                                <div class="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-sm">Youtube MPAC</span>
+                            </a>
+                            <a href="https://www.facebook.com/mpacre" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                                <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-sm">Facebook MPAC</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Setores e Departamentos (versão resumida para mobile) -->
+                    <div>
+                        <h4 class="font-bold text-base mb-3 text-red-400">Setores Principais</h4>
+                        <div class="space-y-2">
+                            <a href="https://www.mpac.mp.br/atendimento-ao-cidadao/ouvidoria/canais-de-comunicacao/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                                <div class="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M7 2a1 1 0 00-.293.707L6 3.5v5.093l-2.646 4.63a1 1 0 00.894 1.577h8.504a1 1 0 00.894-1.577L12 8.593V3.5L11.293 3A1 1 0 0011 2H7zm2 9a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <span class="text-sm">Ouvidoria</span>
+                            </a>
+                            <a href="https://www.mpac.mp.br/nat/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                                <div class="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-sm">NAT</span>
+                            </a>
+                            <a href="https://www.mpac.mp.br/atendimento-ao-cidadao/cav/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                                <div class="w-6 h-6 bg-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <span class="text-sm">CAV</span>
+                            </a>
+                            <a href="https://www.mpac.mp.br/atendimento-ao-cidadao/cav/observatorio-de-violencia-de-genero/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                                <div class="w-6 h-6 bg-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm">OBSGênero</span>
+                            </a>
+                            <a href="https://nat.mpac.mp.br/observatorio-de-politicas-publicas/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                                <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm">OPP</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="mobile-menu-close" class="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-2xl" aria-label="Fechar menu">&times;</button>
+    </div>
+    
+    <!-- Conteúdo Principal -->
+    <div class="relative z-20 min-h-screen flex items-center pb-24 md:pb-0">
+        <div class="container mx-auto px-6 lg:px-16">
+            <div class="flex flex-col lg:flex-row items-center justify-between">
+                <!-- Área de Conteúdo (Esquerda) -->
+                <div class="lg:w-1/2 mb-8 lg:mb-0">
+                    <div class="main-content">
+                        <div id="content-container">
+                            <!-- Conteúdo será inserido dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Carrossel de Cartões (Direita) e Indicadores -->
+                <div class="w-full lg:w-1/2 flex flex-col items-center lg:items-end mt-8 lg:mt-0 mb-8 md:mb-0">
+                    <div class="card-container" id="image-carousel">
+                        <!-- Cartões serão inseridos dinamicamente -->
+                    </div>
+                    <!-- Indicadores -->
+                    <div class="flex justify-center w-full mt-6 mb-6 md:mb-0">
+                        <div id="indicators" class="flex space-x-3">
+                            <!-- Indicadores serão inseridos dinamicamente -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informações de Contato -->
+    <div class="text-center py-8">
+        <p class="text-white text-sm md:text-base">
+            Rua Marechal Deodoro, 472 – Ipase – CEP: 69.900-333 | Telefone: (68) 3212-2000
+        </p>
+    </div>
+
+    <!-- Modal de Detalhes -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div id="modal-content" class="modal-content" role="dialog" aria-modal="true">
+            <div class="grid grid-cols-1 gap-4 md:gap-8 text-white">
+                <div>
+                    <p id="modal-category" class="text-xs md:text-sm uppercase tracking-wider text-white/70 mb-2"></p>
+                    <h2 id="modal-title" class="text-2xl md:text-4xl font-serif font-bold mb-3 md:mb-4"></h2>
+                    <p id="modal-description" class="text-base md:text-lg mb-4 md:mb-6"></p>
+                    <h3 class="font-bold text-lg md:text-xl mb-2 md:mb-3">Mais Informações</h3>
+                    <div id="modal-more" class="text-sm md:text-base text-white/80"></div>
+                </div>
+            </div>
+        </div>
+        <button id="modal-close" class="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-2xl" aria-label="Fechar modal">&times;</button>
+    </div>
+
+    <!-- Modal de Contato -->
+    <div id="contact-modal-overlay" class="modal-overlay">
+        <div id="contact-modal-content" class="modal-content" role="dialog" aria-modal="true">
+            <div class="text-white">
+                <h2 class="text-2xl md:text-4xl font-serif font-bold mb-6 text-center">Contatos MPAC</h2>
+
+                <!-- Links Principais -->
+                <div class="mb-8">
+                    <h3 class="font-bold text-lg md:text-xl mb-4 text-red-400">Links Principais</h3>
+                    <div class="space-y-3">
+                        <a href="https://www.mpac.mp.br/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">MPAC - Site Oficial</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Redes Sociais -->
+                <div class="mb-8">
+                    <h3 class="font-bold text-lg md:text-xl mb-4 text-red-400">Redes Sociais</h3>
+                    <div class="space-y-3">
+                        <a href="https://www.instagram.com/mpacre/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">Instagram MPAC</span>
+                        </a>
+                        <a href="https://www.youtube.com/mpacre" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">Youtube MPAC</span>
+                        </a>
+                        <a href="https://www.facebook.com/mpacre" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">Facebook MPAC</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Setores e Departamentos -->
+                <div>
+                    <h3 class="font-bold text-lg md:text-xl mb-4 text-red-400">Setores e Departamentos</h3>
+                    <div class="space-y-3">
+                        <a href="https://www.mpac.mp.br/atendimento-ao-cidadao/ouvidoria/canais-de-comunicacao/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">Ouvidoria-Geral do MPAC</span>
+                        </a>
+                        <a href="https://www.mpac.mp.br/nat/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">Núcleo de Apoio Técnico - NAT</span>
+                        </a>
+                        <a href="https://www.mpac.mp.br/atendimento-ao-cidadao/cav/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-pink-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">CAV</span>
+                        </a>
+                    
+                        <a href="https://nat.mpac.mp.br/observatorio-de-analise-criminal/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-orange-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">Observatório de Análise Criminal</span>
+                        </a>
+                        <a href="https://ceaf.mpac.mp.br/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">Centro de Estudos e Aperfeiçoamento Funcional - CEAF</span>
+                        </a>
+                        <a href="https://www.mpac.mp.br/atendimento-ao-cidadao/cac/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-cyan-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">Centro de Atendimento ao Cidadão – CAC</span>
+                        </a>
+                        <a href="https://seringallab.mpac.mp.br/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M7 2a1 1 0 00-.293.707L6 3.5v5.093l-2.646 4.63a1 1 0 00.894 1.577h8.504a1 1 0 00.894-1.577L12 8.593V3.5L11.293 3A1 1 0 0011 2H7zm2 9a1 1 0 100 2h2a1 1 0 100-2H9z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">SeringalLab - Laboratório de Inovação</span>
+                        </a>
+                        <a href="https://www.mpac.mp.br/atendimento-ao-cidadao/cav/observatorio-de-violencia-de-genero/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">OBSGênero - Observatório de Violência de Gênero</span>
+                        </a>
+                        <a href="https://nat.mpac.mp.br/observatorio-de-politicas-publicas/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">OPP - Observatório de Políticas Públicas</span>
+                        </a>
+                        <a href="https://www.mpac.mp.br/natera/" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10 hover:border-white/20">
+                            <div class="w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                                </svg>
+                            </div>
+                            <span class="text-sm md:text-base">Núcleo de Apoio e Atendimento Psicossocial – NATERA</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button id="contact-modal-close" class="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-2xl" aria-label="Fechar modal">&times;</button>
+    </div>
+
+    <!-- Rodapé com informações de contato -->
+    <div class="fixed bottom-0 left-0 w-full z-30 bg-black/40 backdrop-blur-sm border-t border-white/20 py-4">
+        <div class="container mx-auto px-6">
+            <p class="text-center text-white text-xs md:text-sm font-medium">
+                Rua Marechal Deodoro, 472 – Ipase – CEP: 69.900-333 | Telefone: (68) 3212-2000, Rio Branco, Acre
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const slides = [
+            // Inovação na Gestão
+            {
+                title: "Anton.IA",
+                description: "A assistente virtual inteligente desenvolvida pelo Seringal Lab para otimizar tarefas e fornecer informações rápidas no MPAC.",
+                background: { type: 'img', src: 'https://static.wixstatic.com/media/c96204_5d5e173f45b94cb2b2bd997e856e8c72~mv2.png' },
+                cardImages: ["assets/sl01.png"],
+                category: "Inovação na Gestão"
+            },
+            {
+                title: "Simplifica",
+                description: "Iniciativa que promove o uso dos fundamentos da Linguagem Simples na comunicação interna e externa do MPAC.",
+                background: { type: 'img', src: 'assets/bg_seringal.png' },
+                cardImages: ["assets/sl02.png"],
+                category: "Inovação na Gestão"
+            },
+            {
+                title: "Bora!",
+                description: "Capacita cidadãos para atuarem como agentes de fiscalização, fortalecendo a cidadania ativa e a gestão pública.",
+                background: { type: 'img', src: 'assets/bg_seringal.png' },
+                cardImages: ["assets/sl03.png"],
+                category: "Inovação na Gestão"
+            },
+            {
+                title: "Empodera",
+                description: "Metodologia inovadora que transforma dados públicos em ação efetiva contra irregularidades na administração pública.",
+                background: { type: 'img', src: 'assets/bg_seringal.png' },
+                cardImages: ["assets/sl04.png"],
+                category: "Inovação na Gestão"
+            },
+            {
+                title: "Seringalpedia",
+                description: "Sistema de inteligência que identifica irregularidades ambientais e fundiárias, fortalecendo investigações e a defesa do meio ambiente.",
+                background: { type: 'img', src: 'assets/bg_seringal.png' },
+                cardImages: ["assets/sl05.png"],
+                category: "Inovação na Gestão"
+            },
+            // Inovação Social
+            {
+                title: "TranscreveAI",
+                description: "Projeto de apoio e inclusão para pessoas com Transtorno do Espectro Autista e suas famílias.",
+                background: { type: 'img', src: 'assets/bg_seringal.png' },
+                cardImages: ["assets/sl06.png"],
+                category: "Inovação Social"
+            },
+            {
+                title: "Robotiza",
+                description: "Iniciativa que incentiva a destinação de parte do Imposto de Renda para fundos de proteção à criança e ao adolescente.",
+                background: { type: 'img', src: 'assets/bg_seringal.png' },
+                cardImages: ["assets/sl07.png"],
+                category: "Inovação Social"
+            },
+            {
+                title: "Seringal link",
+                description: "O direito à informação que salva vidas, combatendo a violência de gênero através da conscientização e do acesso à justiça.",
+                background: { type: 'img', src: 'assets/bg_seringal.png' },
+                cardImages: ["assets/sl08.png"],
+                category: "Inovação Social"
+            },
+            {
+                title: "Lab Itinerante",
+                description: "Fornecimento de produtos regionais para merenda escolar, valorizando agricultores familiares e a nutrição dos alunos.",
+                background: { type: 'img', src: 'assets/bg_seringal.png' },
+                cardImages: ["assets/sl09.png"],
+                category: "Inovação Social"
+            },
+            // Inovação Tecnológica
+            {
+                title: "MPAC Lab",
+                description: "Sistema Integrado de Gestão Estratégica que otimiza processos e a tomada de decisões no setor público.",
+                background: { type: 'img', src: 'assets/bg_seringal.png' },
+                cardImages: ["assets/sl10.png"],
+                category: "Inovação Tecnológica"
+            },
+            {
+                title: "Retiro Lab",
+                description: "Ferramenta tecnológica de monitoramento e alerta precoce para áreas de risco de enchentes.",
+                background: { type: 'img', src: 'assets/bg_seringal.png' },
+                cardImages: ["assets/sl11.png"],
+                category: "Inovação Tecnológica"
+            },
+            {
+                title: "Consultoria de Inovação",
+                description: "Sistema de coleta e análise de dados sobre feminicídios para subsidiar políticas de prevenção e combate.",
+                background: { type: 'img', src: 'assets/bg_seringal.png' },
+                cardImages: ["assets/sl12.png"],
+                category: "Inovação Tecnológica"
+            }
+        ];
+
+        let originalSlides = [...slides];
+        let displayedSlides = [...slides];
+        let currentSlide = 0;
+        let autoSlideInterval;
+        let bgA, bgB, activeBg;
+        let isFinalistFilterActive = false;
+
+        function initializeSlider() {
+            bgA = document.getElementById('background-a');
+            bgB = document.getElementById('background-b');
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+
+            setSlideBackground(bgA, displayedSlides[0].background);
+            activeBg = bgA;
+
+            renderIndicators();
+            renderImageCards();
+            updateSlide(true); // Marca como inicialização
+            startAutoSlide();
+
+            const desktopSearch = () => {
+                performSearchLogic(searchInput.value.toLowerCase().trim(), searchInput.value);
+            };
+            searchBtn.addEventListener('click', desktopSearch);
+            searchInput.addEventListener('input', desktopSearch);
+            searchInput.addEventListener('keydown', e => {
+                if (e.key === 'Escape') {
+                    searchInput.value = '';
+                    desktopSearch();
+                }
+            });
+            
+            document.getElementById('modal-overlay').addEventListener('click', (e) => {
+                if (e.target.id === 'modal-overlay' || e.target.id === 'modal-close') {
+                    closeModal();
+                }
+            });
+        }
+
+        function renderIndicators() {
+            const indicatorsContainer = document.getElementById('indicators');
+            indicatorsContainer.innerHTML = '';
+
+            displayedSlides.forEach((_, index) => {
+                const indicator = document.createElement('div');
+                indicator.className = `indicator rounded-full cursor-pointer`;
+                indicator.style.backgroundColor = '#b3e127';
+                indicator.addEventListener('click', () => goToSlide(index));
+                indicatorsContainer.appendChild(indicator);
+            });
+        }
+
+        function renderImageCards() {
+            const carouselContainer = document.getElementById('image-carousel');
+            carouselContainer.innerHTML = '';
+            
+            displayedSlides.forEach((slide, index) => {
+                const card = document.createElement('div');
+                card.className = 'image-card';
+                card.innerHTML = `<img src="${slide.cardImages[0]}" alt="${slide.title}" class="w-full h-full object-cover">`;
+                card.addEventListener('click', () => goToSlide(index));
+                carouselContainer.appendChild(card);
+            });
+
+            carouselContainer.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+            carouselContainer.addEventListener('mouseleave', () => restartAutoSlide());
+        }
+
+        function updateSlide(isInitial = false) {
+            if (displayedSlides.length === 0) return;
+
+            // Atualizar fundo com cross-fade
+            if (!isInitial) {
+                const inactiveBg = (activeBg === bgA) ? bgB : bgA;
+                setSlideBackground(inactiveBg, displayedSlides[currentSlide].background);
+                activeBg.style.opacity = '0';
+                inactiveBg.style.opacity = '1';
+                activeBg = inactiveBg;
+            }
+            
+            // Atualizar conteúdo
+            const contentContainer = document.getElementById('content-container');
+            const isFinalist = displayedSlides.length > 0 && displayedSlides[currentSlide].isFinalist;
+            contentContainer.innerHTML = `
+                <div class="content-slide">
+                    ${isFinalist ? '<div class="finalist-tag">⭐ Finalista Prêmio J.Ex</div>' : ''}
+                    <p class="text-sm font-medium tracking-wider mb-3 uppercase" style="color: #b9e62f;">${displayedSlides[currentSlide].category}</p>
+                    <h1 class="slide-title font-serif font-bold text-white">${displayedSlides[currentSlide].title}</h1>
+                    <p class="slide-description text-white">${displayedSlides[currentSlide].description}</p>
+                    <button class="relative btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 lg:px-8 lg:py-4 rounded-full text-sm lg:text-base">
+                        <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+                        <span class="relative z-10">Explore Agora</span>
+                    </button>
+                </div>
+            `;
+            
+            // Adicionar evento ao botão Explore Agora
+            contentContainer.querySelector('button').addEventListener('click', () => {
+                openModal(displayedSlides[currentSlide]);
+            });
+
+            // Aplicar animação de entrada
+            setTimeout(() => {
+                const contentSlide = document.querySelector('.content-slide');
+                contentSlide.classList.add('active');
+            }, 100);
+            
+            // Atualizar indicadores
+            updateIndicators();
+            
+            // Atualizar cartões de imagem
+            updateImageCards();
+        }
+
+        function updateIndicators() {
+            if (displayedSlides.length === 0) return;
+            const indicators = document.querySelectorAll('.indicator');
+            indicators.forEach((indicator, index) => {
+                indicator.classList.remove('active');
+                indicator.style.backgroundColor = '#b3e127';
+                indicator.style.opacity = '0.4';
+
+                if (index === currentSlide) {
+                    indicator.classList.add('active');
+                    indicator.style.opacity = '1';
+                }
+            });
+        }
+
+        function updateImageCards() {
+            if (displayedSlides.length === 0) return;
+            const cards = document.querySelectorAll('.image-card');
+            const container = document.getElementById('image-carousel');
+            
+            cards.forEach((card, index) => {
+                card.classList.remove('active', 'inactive');
+                
+                if (index === currentSlide) {
+                    card.classList.add('active');
+                    // Scroll suave para centralizar o cartão ativo
+                    setTimeout(() => {
+                        const containerRect = container.getBoundingClientRect();
+                        const cardRect = card.getBoundingClientRect();
+                        const scrollLeft = card.offsetLeft - (containerRect.width / 2) + (cardRect.width / 2);
+                        container.scrollTo({
+                            left: scrollLeft,
+                            behavior: 'smooth'
+                        });
+                    }, 100);
+                } else {
+                    card.classList.add('inactive');
+                }
+            });
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlide();
+            restartAutoSlide();
+        }
+
+        function nextSlide() {
+            if (displayedSlides.length === 0) return;
+            currentSlide = (currentSlide + 1) % displayedSlides.length;
+            updateSlide();
+        }
+
+        function prevSlide() {
+            if (displayedSlides.length === 0) return;
+            currentSlide = (currentSlide - 1 + displayedSlides.length) % displayedSlides.length;
+            updateSlide();
+        }
+
+        function startAutoSlide() {
+            clearInterval(autoSlideInterval);
+            autoSlideInterval = setInterval(nextSlide, 4000);
+        }
+
+        function restartAutoSlide() {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+
+        function openModal(slide) {
+  const overlay = document.getElementById('modal-overlay');
+  document.getElementById('modal-category').textContent = slide.category;
+  document.getElementById('modal-title').textContent = slide.title;
+  document.getElementById('modal-description').textContent = slide.description;
+
+  const moreInfoEl = document.getElementById('modal-more');
+  const defaultMore = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`;
+
+  if (slide.title === 'Observatório de Políticas Públicas') {
+    moreInfoEl.innerHTML = `
+      <p class="mb-3">O Observatório de Políticas Públicas (OPP) do Ministério Público do Estado do Acre (MPAC) representa uma inovação significativa no acompanhamento da gestão pública no estado. Criado em 2024, o OPP se destaca pela sua contribuição para a transparência e o controle social, monitorando a execução de políticas públicas de acordo com o Plano Plurianual (PPA), a Lei de Diretrizes Orçamentárias (LDO) e a Lei Orçamentária Anual (LOA).</p>
+      <p class="mb-4"><strong>Setor responsável</strong>: Núcleo de Apoio Técnico (NAT)</p>
+      <a href="https://nat.mpac.mp.br/observatorio-de-politicas-publicas/" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+        <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+        <span class="relative z-10">Acessar OPP</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+      </a>
+    `;
+  } else if (slide.title === 'Ação Impacto' || slide.title === 'Ação IMPACTO') {
+    moreInfoEl.innerHTML = `
+      <p class="mb-3">A Ação Institucional <strong>IMPACTO</strong> é uma iniciativa do Ministério Público do Estado do Acre (MPAC) que incentiva membros e servidores a desenvolver projetos inovadores e resolutivos para enfrentar desafios sociais, ambientais e institucionais. Com critérios técnicos e alinhamento ao planejamento estratégico, adota um modelo diferenciado de seleção, apoiando financeiramente as propostas, acompanhando sua execução e reconhecendo os melhores resultados com o <strong>Selo IMPACTO</strong>.</p>
+      <p class="mb-4"><strong>Setor responsável</strong>: Secretaria de Planejamento Institucional e Inovação</p>
+      <a href="https://impacto.mpac.mp.br/" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+        <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+        <span class="relative z-10">Acessar IMPACTO</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+      </a>
+    `;
+  } else if (slide.title === 'Investigador Cidadão') {
+    moreInfoEl.innerHTML = `
+      <p class="mb-3">O projeto, criado pelo Ministério Público do Estado do Acre (MPAC), ampliou a forma de combate ao crime organizado com a implantação do disque-denúncia via WhatsApp. A ferramenta permite que a população encaminhe, de forma anônima, segura e sigilosa, informações sobre organizações criminosas, auxiliando na identificação de lideranças, foragidos, esconderijos e crimes graves como homicídios, tortura, extorsão e lavagem de dinheiro.</p>
+      <p class="mb-4"><strong>Setor responsável</strong>: Núcleo de Apoio Técnico (NAT)</p>
+      <a href="https://bancodeprojetos.cnmp.mp.br/Detalhe?idProjeto=4502" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+        <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+        <span class="relative z-10">Acessar Projeto</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    `;
+ } else if (slide.title === 'TEA - Eles não estão Sós') {
+  moreInfoEl.innerHTML = `
+    <p class="mb-3">O Ministério Público do Estado do Acre (MPAC) desenvolveu o projeto para enfrentar a falta de dados e de políticas públicas estruturadas voltadas às pessoas com Transtorno do Espectro Autista (TEA). A iniciativa realizou um amplo diagnóstico por município, mapeando serviços e identificando realidades sociais, econômicas e familiares, o que permitiu orientar intervenções mais qualificadas.</p>
+    <p class="mb-3">Com base nesse levantamento, o MPAC articulou 352 pactuações interinstitucionais, promoveu rodas de conversa, oficinas regionais e visitas técnicas, além de produzir materiais de conscientização e capacitação. Os resultados já incluem avanços concretos, como a implantação do CER II no Alto Acre e a criação de um centro de referência em terapias em Tarauacá, reafirmando o compromisso do MPAC com a inclusão, a dignidade e a efetivação de direitos.</p>
+    <p class="mb-4"><strong>Setor responsável</strong>: Centro de Apoio Operacional de defesa da Saúde, Pessoas Idosa e Pessoa com Deficiência (CAOP SAUDE – DI)</p>
+    <a href="https://bancodeprojetos.cnmp.mp.br/Detalhe?idProjeto=3910" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+      <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+      <span class="relative z-10">Acessar Projeto</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>
+  `;
+     } else if (slide.title === 'Destine e Proteja') {
+  moreInfoEl.innerHTML = `
+    <p class="mb-3">O Ministério Público do Estado do Acre (MPAC) criou o projeto <strong>Destine e Proteja</strong> para incentivar a transformação do imposto de renda devido em investimento social. A iniciativa orienta e sensibiliza servidores, profissionais liberais, empresas e cidadãos sobre a possibilidade de destinar até 6% do imposto ao Fundo Estadual dos Direitos da Criança e do Adolescente (FIA/AC), fortalecendo a rede de proteção infantojuvenil.</p>
+    <p class="mb-4">Com apoio do Conselho Estadual dos Direitos da Criança e do Adolescente (CEDCA) e de parceiros estratégicos, os recursos são redistribuídos aos municípios que possuem Conselhos e Fundos regularizados, garantindo o financiamento de projetos prioritários em áreas como combate à violência sexual, erradicação do trabalho infantil, proteção familiar e segurança alimentar.</p>
+    <p class="mb-4"><strong>Setor responsável</strong>: Centro de Apoio Operacional de Defesa da Criança e do Adolescente, Educação e Execução de Medidas Socioeducativas</p>
+    <a href="https://bancodeprojetos.cnmp.mp.br/Detalhe?idProjeto=4266" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+      <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+      <span class="relative z-10">Acessar Projeto</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>
+     `;
+    } else if (slide.title === 'Justiça de Gênero') {
+  moreInfoEl.innerHTML = `
+    <p class="mb-3">O projeto <strong>"Justiça de Gênero - o direito à informação salva vidas"</strong> busca fortalecer a atuação interinstitucional para prevenir e enfrentar a violência de gênero, utilizando dados e evidências produzidos pelo Observatório de Violência de Gênero (OBSGênero). Seu objetivo central é qualificar políticas públicas, melhorar os serviços prestados e ampliar o acesso das mulheres ao sistema de proteção e justiça.</p>
+
+    <p class="mb-3 font-semibold">De forma prática, o projeto:</p>
+    <ul class="list-disc list-inside space-y-2 mb-4">
+      <li>Ouve as vítimas de feminicídio tentado, sobreviventes, identificando falhas na rede de proteção e oferecendo subsídios para aprimorar as políticas públicas, bem como reinserir essas vítimas na rede de atendimento;</li>
+      <li>Capacita profissionais da rede de atendimento, com foco em prevenção, acolhimento, proteção e responsabilização;</li>
+      <li>Analisa e sistematiza dados sobre feminicídios tentados, para compreender perfis de vítimas, agressores e respostas institucionais;</li>
+      <li>Fortalece a articulação entre órgãos da rede de proteção, padronizando fluxos e protocolos de atendimento;</li>
+      <li>Dissemina informações qualificadas sobre violência de gênero, promovendo o debate público e o engajamento social.</li>
+    </ul>
+
+    <p class="mb-4"><strong>Setor responsável</strong>: Observatório de Violência de Gênero (OBSGênero)</p>
+    <a href="https://mpacre-my.sharepoint.com/personal/oneta_mpac_mp_br/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Foneta%5Fmpac%5Fmp%5Fbr%2FDocuments%2FJusti%C3%A7a%20de%20G%C3%AAnero%20%2D%20o%20direito%20%C3%A0%20informa%C3%A7%C3%A3o%20salva%20vidas%21&ga=1" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+        <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+        <span class="relative z-10">Saiba Mais</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+    </a>
+  `;
+} else if (slide.title === 'Merenda Escolar Regional') {
+  moreInfoEl.innerHTML = `
+    <p class="mb-3">Iniciativa do Ministério Público do Estado do Acre, em parceria com o CECANE/UFAC, secretarias públicas e organizações comunitárias, o projeto nasceu para garantir o cumprimento da lei que exige a aplicação de pelo menos 30% dos recursos do PNAE na compra de alimentos da agricultura familiar.</p>
+
+    <p class="mb-3">A ação promoveu oficinas, visitas técnicas e escutas comunitárias, incentivando a participação de pequenos agricultores no fornecimento da merenda escolar, substituindo alimentos ultraprocessados por produtos frescos e regionais. O impacto foi duplo: melhoria da qualidade nutricional oferecida aos estudantes e fortalecimento da economia local, especialmente de comunidades indígenas, ribeirinhas, extrativistas e de assentamento.</p>
+
+    <p class="mb-4">Com resultados já visíveis, o projeto se consolidou como uma experiência de justiça social e segurança alimentar, unindo inclusão produtiva, valorização cultural e desenvolvimento sustentável no Alto Juruá.</p>
+
+    <p class="mb-4"><strong>Setor responsável</strong>: Promotoria de Justiça de Defesa da Criança e do Adolescente de Cruzeiro do Sul</p>
+    <a href="https://bancodeprojetos.cnmp.mp.br/Detalhe?idProjeto=4222" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+      <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+      <span class="relative z-10">Acessar Projeto</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>
+  `;
+} else if (slide.title === 'SIGE') {
+  moreInfoEl.innerHTML = `
+    <p class="mb-3">O <strong>Sistema Integrado de Gestão Estratégica (SIGE)</strong> é uma solução tecnológica desenvolvida pelo Ministério Público do Estado do Acre (MPAC) para registrar, monitorar e avaliar os resultados das unidades na execução dos principais instrumentos de gestão: Plano Plurianual (PPA), Plano Geral de Atuação (PGA) e Plano Operacional de Atuação (POA).</p>
+
+    <p class="mb-3">Estruturado em três fases – registro, monitoramento e desempenho – o SIGE permite acompanhar o ciclo completo das ações planejadas. A plataforma possui uma interface simples e intuitiva, reduzindo a necessidade de suporte técnico e aumentando a agilidade na gestão.</p>
+
+    <p class="mb-4"><strong>Setor responsável</strong>: Secretaria de Planejamento Institucional e Inovação</p>
+    <a href="https://sige.mpac.mp.br/#/login" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+      <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+      <span class="relative z-10">Acessar SIGE</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>  
+  `;  
+} else if (slide.title === 'Radar de Enchentes do MPAC') {
+  moreInfoEl.innerHTML = `
+    <p class="mb-3">O <strong>Radar de Enchentes</strong> é uma plataforma web desenvolvida pelo Ministério Público do Estado do Acre (MPAC) para monitorar, em tempo real, os níveis dos rios acreanos durante o período de cheias. A ferramenta reúne informações sobre riscos de alagamentos, emite alertas à população e integra os dados do Grupo Especial de Prevenção e Resposta a Desastres (GPRD), permitindo acompanhar as ações ministeriais em situações de emergência.</p>
+
+    <p class="mb-4">Com essa iniciativa, o Radar amplia a transparência, fortalece a capacidade institucional de resposta e reforça a proteção às comunidades atingidas, transformando informação em um recurso estratégico para salvar vidas.</p>
+
+    <p class="mb-4"><strong>Setor responsável</strong>: Secretaria de Planejamento Institucional e Inovação</p>
+    <a href="https://radardeenchentes.mpac.mp.br/" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+      <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+      <span class="relative z-10">Acessar Radar</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>
+  `; 
+  } else if (slide.title === 'Feminicidômetro') {
+  moreInfoEl.innerHTML = `
+    <p class="mb-3">O <strong>Feminicidômetro</strong> é uma ferramenta de pesquisa e controle social que proporciona à população acesso a informações não sensíveis dos processos dos crimes de feminicídios no Acre. Seu objetivo é subsidiar melhorias no tempo da persecução e no sistema de justiça. A plataforma organiza as etapas em uma linha do tempo, desde a ocorrência do crime até a sentença final, permitindo que a sociedade acompanhe o tempo das denúncias, julgamentos, recursos e decisões, além de reunir estudos, publicações e informações sobre a atuação ministerial.</p>
+
+    <p class="mb-4">Nos últimos oito anos, 83 mulheres foram vítimas de feminicídio no Acre — crimes que refletem a violência estrutural de gênero. Ao tornar visíveis os dados e monitorar a persecução penal, o Feminicidômetro fortalece a atuação institucional, sensibiliza a sociedade e subsidia e fomenta a construção de políticas públicas de prevenção e proteção das mulheres.</p>
+
+    <p class="mb-4"><strong>Setor responsável</strong>: Observatório de Violência de Gênero (OBSGênero)</p>
+    <a href="https://feminicidometro.mpac.mp.br" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+      <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+      <span class="relative z-10">Acessar Plataforma</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>
+  `;
+   } else if (slide.title === 'ComparaAI') {
+  moreInfoEl.innerHTML = `
+    <p class="mb-3">A ferramenta <strong>ComparaAI</strong> é uma solução de ponta para comparação facial, desenvolvida com base no robusto framework DeepFace. Ela oferece diversos modelos de redes neurais pré-treinadas, garantindo análises precisas e eficientes.</p>
+
+    <p class="mb-3">Com o ComparaAI, a comparação de rostos vai além da simples identificação, fornecendo resultados detalhados em porcentagem. A ferramenta também é capaz de estimar a idade, a etnia predominante e outras características, eliminando a subjetividade da análise humana.</p>
+
+    <p class="mb-4">Ao fornecer dados objetivos e valores de certeza, o ComparaAI capacita os analistas, otimizando o processo de avaliação e garantindo maior confiabilidade nos resultados.</p>
+
+    <p class="mb-4"><strong>Setor responsável</strong>: Núcleo de Apoio Técnico (NAT)</p>
+    <a href="https://sigep.mpac.mp.br/" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+      <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+      <span class="relative z-10">Acessar Sistema</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>
+   `;
+     } else if (slide.title === 'COPI') {
+        moreInfoEl.innerHTML = `
+            <p class="mb-3">O COPI, criado em 2022 pelo NAT/MPAC, identifica e comunica irregularidades ambientais e fundiárias a partir do cruzamento de dados do MapBiomas Alerta, CAR e SINAFLOR, aliados a análises geoespaciais.</p>
+            <p class="mb-3">Os relatórios apontam áreas afetadas, possíveis responsáveis, danos e subsídios para responsabilização civil, criminal e administrativa. Com uso de monitoramento remoto, inteligência geoespacial e BI, o COPI fortalece investigações, fomenta ações judiciais e promove articulação interinstitucional, tornando-se uma ferramenta estratégica e preventiva na defesa do meio ambiente.</p>
+            <p class="mb-4"><strong>Setor responsável</strong>: Núcleo de Apoio Técnico (NAT)</p>
+            <a href="https://nat.mpac.mp.br/copi-comunicado-possiveis-irregularidades/" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+                <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+                <span class="relative z-10">Acessar COPI</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+            </a>
+        `;
+    } else if (slide.title === 'SeringalLab') {
+  moreInfoEl.innerHTML = `
+    <p class="mb-3">O <strong>SeringalLab</strong> é o laboratório de inovação do Ministério Público do Estado do Acre (MPAC). Constitui-se como um espaço dinâmico de experimentação e cocriação, voltado ao desenvolvimento de ideias, métodos e tecnologias capazes de transformar a cultura organizacional e oferecer soluções concretas para os desafios do serviço público.</p>
+
+    <p class="mb-4"><strong>Setor responsável</strong>: Secretaria de Planejamento Institucional e Inovação</p>
+    <a href="https://seringallab.mpac.mp.br/#inicio" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+      <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+      <span class="relative z-10">Acessar SeringalLab</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>
+
+   `;
+    } else if (slide.title === 'LEAAM') {
+  moreInfoEl.innerHTML = `
+    <p class="mb-3">O <strong>Laboratório de Estágio em Apoio à Atividade Ministerial (LEAAM)</strong> do MPAC acolhe discentes do curso de Direito para que executem as disciplinas de Estágio Supervisionado no âmbito do MP, com o consequente apoio às unidades da instituição com alto volume de trabalho em processos virtuais.</p>
+
+    <p class="mb-3">Além de atividades como elaboração de peças, pesquisas jurídicas e participação em audiências, o LEAAM utiliza o sistema Episteme, desenvolvido pelo próprio MPAC, para gerenciar e registrar a atuação dos estagiários, controlando produções, relatórios e auxílios prestados.</p>
+
+    <p class="mb-4">A iniciativa alia formação prática qualificada e inovação tecnológica para fortalecer a atuação ministerial.</p>
+
+    <p class="mb-4"><strong>Setor responsável</strong>: Centro de Estudos e Aperfeiçoamento Funcional - CEAF</p>
+    <a href="https://episteme.mpac.mp.br" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+      <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+      <span class="relative z-10">Acessar Sistema Episteme</span>
+      <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+      </svg>
+    </a>
+  
+   `;
+
+  } else if (slide.title === 'COAT') {
+    moreInfoEl.innerHTML = `
+      <p class="mb-3">O COAT é uma metodologia inovadora do MPAC, criada em 2022 pelo LAB-LD/NAT, que transforma dados públicos em ação efetiva contra irregularidades na administração.</p>
+      <p class="mb-3">Por meio do monitoramento de Portais de Transparência e cruzamento de informações em fontes abertas, são elaborados relatórios técnicos que identificam indícios de ilícitos, apontam responsáveis, estimam danos e subsidiam investigações.</p>
+      <p class="mb-3">Os comunicados são encaminhados ao Centro de Apoio do Patrimônio Público, que os distribui às Promotorias de Justiça, resultando em denúncias, TACs, recomendações e ações civis públicas.</p>
+      <p class="mb-4">De 2022 a julho de 2025, os prejuízos identificados já somam mais de R$ 1,6 bilhão.</p>
+      <p class="mb-4"><strong>Setor responsável</strong>: Laboratório de Tecnologia contra a Lavagem de Dinheiro (LAB-LD/NAT)</p>
+      <a href="https://nat.mpac.mp.br/coat/" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+        <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+        <span class="relative z-10">Acessar COAT</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+      </a>
+    `;
+  } else if (slide.title === 'Retina') {
+    moreInfoEl.innerHTML = `
+      <p class="mb-3">O RETINA é um sistema de inteligência desenvolvido pelo Ministério Público do Estado do Acre (MPAC) para centralizar, organizar e analisar informações sobre organizações criminosas e seus integrantes. A plataforma integra registros formais — como inquéritos, denúncias e sentenças — permitindo consultas avançadas por filtros, análises de vínculos e a produção de relatórios estratégicos.</p>
+      <p class="mb-3">O sistema já consolidou cooperação com 13 Ministérios Públicos e 9 órgãos de segurança, conta com mais de 10.600 indivíduos cadastrados e ultrapassa 14.000 acessos, tornando-se referência no apoio a investigações e formulação de políticas públicas.</p>
+      <p class="mb-4">Com arquitetura flexível e potencial de expansão em âmbito nacional, o RETINA se afirma como uma inovação disruptiva no enfrentamento ao crime organizado.</p>
+      <p class="mb-4"><strong>Setor responsável</strong>: Núcleo de Apoio Técnico (NAT)</p>
+      <a href="https://retina.mpac.mp.br/login" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+        <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+        <span class="relative z-10">Acessar RETINA</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+      </a>
+    `;
+  } else if (slide.title === 'Prêmio Melhor Estágio') {
+    moreInfoEl.innerHTML = `
+      <p class="mb-3">O Prêmio Melhor Estágio, instituído em 2024 pelo CEAF/MPAC, tem como propósito reconhecer e valorizar estagiários e supervisores que se destacam pela excelência, dedicação e comprometimento. A iniciativa fortalece o engajamento institucional e estimula a melhoria contínua por meio de um processo avaliativo estruturado, que inclui autoavaliações, avaliações mútuas e entrevistas.</p>
+      <p class="mb-4">Os vencedores recebem certificados e portarias de elogio em cerimônia oficial, reforçando uma cultura de valorização, escuta qualificada e incentivo ao desenvolvimento profissional no âmbito do Ministério Público do Estado do Acre.</p>
+      <p class="mb-4"><strong>Setor responsável</strong>: Centro de Estudos e Aperfeiçoamento Funcional – CEAF</p>
+      <a href="https://ceaf.mpac.mp.br/premio-melhor-estagio-mpac/" target="_blank" rel="noopener" class="relative inline-flex items-center gap-2 btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 py-3 rounded-full text-sm">
+        <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
+        <span class="relative z-10">Saiba Mais</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="relative z-10 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+      </a>
+    `;
+  } else {
+    moreInfoEl.textContent = defaultMore;
+  }
+
+  overlay.classList.add('active');
+  clearInterval(autoSlideInterval);
+  document.body.style.overflow = 'hidden';
+  document.getElementById('modal-close').focus();
+}
+
+
+        function closeModal() {
+            const overlay = document.getElementById('modal-overlay');
+            overlay.classList.remove('active');
+            startAutoSlide(); // Retoma o slide show
+            document.body.style.overflow = '';
+        }
+
+        function setSlideBackground(element, background) {
+            element.innerHTML = '';
+            element.style.backgroundImage = `url('${background.src}')`;
+        }
+
+        function performSearchLogic(searchTerm, rawQuery) {
+            clearInterval(autoSlideInterval);
+
+            if (searchTerm === '') {
+                displayedSlides = [...originalSlides];
+            } else {
+                displayedSlides = originalSlides.filter(slide => 
+                    slide.title.toLowerCase().includes(searchTerm) || 
+                    slide.category.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            currentSlide = 0;
+
+            if (displayedSlides.length === 0) {
+                const contentContainer = document.getElementById('content-container');
+                contentContainer.innerHTML = `
+                    <div class="content-slide active">
+                        <h1 class="slide-title font-serif font-bold text-white">Nenhum resultado</h1>
+                        <p class="slide-description text-white">Não encontramos nada para "${rawQuery}". Tente uma nova busca.</p>
+                    </div>
+                `;
+                document.getElementById('image-carousel').innerHTML = '';
+                document.getElementById('indicators').innerHTML = '';
+                bgA.style.backgroundImage = '';
+                bgA.innerHTML = '';
+                bgB.style.backgroundImage = '';
+                bgB.innerHTML = '';
+                return;
+            }
+
+            renderIndicators();
+            renderImageCards();
+            updateSlide();
+            startAutoSlide();
+        }
+
+        // Controle por teclado será adicionado junto com o modal de contato
+
+        // Inicializar slider
+        initializeSlider();
+
+        // Mobile Menu Modal Logic
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        const mobileMainMenu = document.getElementById('mobile-main-menu');
+        const mobileContactMenu = document.getElementById('mobile-contact-menu');
+        const mobileContactBtn = document.getElementById('mobile-contact-btn');
+        const mobileBackBtn = document.getElementById('mobile-back-btn');
+
+        let isMenuOpen = false;
+
+        const openIcon = `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>`;
+        const closeIcon = `<svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+
+        function openMobileMenu() {
+            isMenuOpen = true;
+            mobileMenuOverlay.classList.add('active');
+            hamburgerBtn.innerHTML = closeIcon;
+            clearInterval(autoSlideInterval);
+            document.body.style.overflow = 'hidden';
+            mobileMenuClose.focus();
+        }
+
+        function closeMobileMenu() {
+            isMenuOpen = false;
+            mobileMenuOverlay.classList.remove('active');
+            hamburgerBtn.innerHTML = openIcon;
+            // Reset to main menu view
+            mobileMainMenu.classList.remove('hidden');
+            mobileContactMenu.classList.add('hidden');
+            startAutoSlide();
+            document.body.style.overflow = '';
+        }
+
+        function showContactSubmenu() {
+            mobileMainMenu.classList.add('hidden');
+            mobileContactMenu.classList.remove('hidden');
+        }
+
+        function showMainMenu() {
+            mobileContactMenu.classList.add('hidden');
+            mobileMainMenu.classList.remove('hidden');
+        }
+
+        hamburgerBtn.addEventListener('click', () => {
+            if (isMenuOpen) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
+
+        mobileMenuClose.addEventListener('click', closeMobileMenu);
+
+        mobileContactBtn.addEventListener('click', showContactSubmenu);
+
+        mobileBackBtn.addEventListener('click', showMainMenu);
+
+        mobileMenuOverlay.addEventListener('click', (e) => {
+            if (e.target.id === 'mobile-menu-overlay') {
+                closeMobileMenu();
+            }
+        });
+
+        // Mobile Search Overlay Logic
+        const mobileSearchOpenBtn = document.getElementById('mobile-search-open-btn');
+        const mobileSearchCloseBtn = document.getElementById('mobile-search-close-btn');
+        const mobileSearchOverlay = document.getElementById('mobile-search-overlay');
+        const mobileSearchInput = document.getElementById('mobile-search-input');
+        const mobileSearchExecuteBtn = document.getElementById('mobile-search-execute-btn');
+
+        let isMobileSearchOpen = false;
+
+        mobileSearchOpenBtn.addEventListener('click', () => {
+            isMobileSearchOpen = true;
+            mobileSearchOverlay.classList.remove('hidden');
+            mobileSearchInput.focus();
+        });
+
+        mobileSearchCloseBtn.addEventListener('click', () => {
+            isMobileSearchOpen = false;
+            mobileSearchOverlay.classList.add('hidden');
+            mobileSearchInput.value = '';
+        });
+
+        mobileSearchInput.addEventListener('input', () => {
+            if (mobileSearchInput.value.length > 0) {
+                mobileSearchExecuteBtn.classList.remove('text-white/60');
+                mobileSearchExecuteBtn.classList.add('text-white');
+            } else {
+                mobileSearchExecuteBtn.classList.remove('text-white');
+                mobileSearchExecuteBtn.classList.add('text-white/60');
+            }
+        });
+
+        const mobileSearch = () => {
+            performSearchLogic(mobileSearchInput.value.toLowerCase().trim(), mobileSearchInput.value);
+            isMobileSearchOpen = false;
+            mobileSearchOverlay.classList.add('hidden');
+        };
+
+        mobileSearchExecuteBtn.addEventListener('click', mobileSearch);
+        mobileSearchInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                mobileSearch();
+            }
+        });
+
+        // Contact Modal Logic
+        const contactBtn = document.getElementById('contact-btn');
+        const contactModalOverlay = document.getElementById('contact-modal-overlay');
+        const contactModalClose = document.getElementById('contact-modal-close');
+
+        function openContactModal() {
+            contactModalOverlay.classList.add('active');
+            clearInterval(autoSlideInterval);
+            document.body.style.overflow = 'hidden';
+            contactModalClose.focus();
+        }
+
+        function closeContactModal() {
+            contactModalOverlay.classList.remove('active');
+            startAutoSlide();
+            document.body.style.overflow = '';
+        }
+
+        contactBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openContactModal();
+        });
+
+        contactModalClose.addEventListener('click', closeContactModal);
+
+        contactModalOverlay.addEventListener('click', (e) => {
+            if (e.target.id === 'contact-modal-overlay') {
+                closeContactModal();
+            }
+        });
+
+        // Update the existing keyboard event listener to include all modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') {
+                nextSlide();
+                restartAutoSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+                restartAutoSlide();
+            } else if (e.key === 'Escape') {
+                const overlay = document.getElementById('modal-overlay');
+                const contactOverlay = document.getElementById('contact-modal-overlay');
+                const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+
+                if (overlay.classList.contains('active')) {
+                    closeModal();
+                } else if (contactOverlay.classList.contains('active')) {
+                    closeContactModal();
+                } else if (mobileMenuOverlay.classList.contains('active')) {
+                    // If in contact submenu, go back to main menu, otherwise close
+                    if (!mobileContactMenu.classList.contains('hidden')) {
+                        showMainMenu();
+                    } else {
+                        closeMobileMenu();
+                    }
+                }
+            }
+        });
+
+        // Touch/Swipe gestures para carrossel mobile
+        function initTouchEvents() {
+            const carousel = document.getElementById('image-carousel');
+            let startX = 0;
+            let startY = 0;
+            let distX = 0;
+            let distY = 0;
+            let startTime = 0;
+            const threshold = 50; // Distância mínima para swipe
+            const restraint = 100; // Máxima distância perpendicular
+            const allowedTime = 300; // Tempo máximo para swipe
+
+            function handleTouchStart(e) {
+                const touchObj = e.changedTouches[0];
+                startX = touchObj.pageX;
+                startY = touchObj.pageY;
+                startTime = new Date().getTime();
+                clearInterval(autoSlideInterval); // Pausar slideshow durante touch
+            }
+
+            function handleTouchMove(e) {
+                e.preventDefault(); // Prevenir scroll durante swipe
+            }
+
+            function handleTouchEnd(e) {
+                const touchObj = e.changedTouches[0];
+                distX = touchObj.pageX - startX;
+                distY = touchObj.pageY - startY;
+                const elapsedTime = new Date().getTime() - startTime;
+
+                if (elapsedTime <= allowedTime) {
+                    if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint) {
+                        if (distX > 0) {
+                            // Swipe direita - slide anterior
+                            prevSlide();
+                            restartAutoSlide();
+                        } else {
+                            // Swipe esquerda - próximo slide
+                            nextSlide();
+                            restartAutoSlide();
+                        }
+                    }
+                }
+
+                // Retomar slideshow após um tempo
+                setTimeout(() => {
+                    if (autoSlideInterval === undefined || autoSlideInterval === null) {
+                        startAutoSlide();
+                    }
+                }, 1000);
+            }
+
+            if (carousel) {
+                carousel.addEventListener('touchstart', handleTouchStart, { passive: false });
+                carousel.addEventListener('touchmove', handleTouchMove, { passive: false });
+                carousel.addEventListener('touchend', handleTouchEnd, { passive: false });
+            }
+        }
+
+        // Performance optimizations
+        function optimizeForMobile() {
+            // Detectar conexão lenta e ajustar qualidade
+            if ('connection' in navigator) {
+                const connection = navigator.connection;
+                if (connection.saveData || connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
+                    // Desabilitar vídeos de fundo em conexões lentas
+                    document.querySelectorAll('.slide-bg video').forEach(video => {
+                        video.style.display = 'none';
+                    });
+
+                    // Adicionar fallback de imagem
+                    document.querySelectorAll('.slide-bg').forEach(bg => {
+                        if (!bg.style.backgroundImage) {
+                            bg.style.backgroundColor = '#1a1a1a';
+                        }
+                    });
+                }
+            }
+
+            // Lazy loading para imagens não críticas
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            if (img.dataset.src) {
+                                img.src = img.dataset.src;
+                                img.removeAttribute('data-src');
+                                imageObserver.unobserve(img);
+                            }
+                        }
+                    });
+                });
+
+                document.querySelectorAll('img[data-src]').forEach(img => {
+                    imageObserver.observe(img);
+                });
+            }
+        }
+
+        // Inicializar melhorias mobile
+        if (window.innerWidth <= 768) {
+            initTouchEvents();
+            optimizeForMobile();
+        }
+
+        // Reinicializar em mudanças de orientação
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                if (window.innerWidth <= 768) {
+                    initTouchEvents();
+                }
+            }, 100);
+        });
+
+    </script>
+</body>
+</body>
+</html>
