@@ -402,7 +402,7 @@
     <!-- Header -->
     <header class="relative z-30 flex justify-between items-center p-6 lg:p-8">
         <div class="flex items-center gap-4 flex-shrink-0">
-            <img src="assets/logo_mpac_seringal-01.svg" alt="Logo Seringal Lab" class="h-14 lg:h-20" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); max-width: 460px;">
+            <img src="assets/logo_mpac_seringal-01.svg" alt="Logo Seringal Lab" class="h-16 lg:h-20" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); max-width: 518px;">
         </div>
 
         <!-- Desktop Search Bar -->
@@ -642,6 +642,7 @@
         <div id="modal-content" class="modal-content" role="dialog" aria-modal="true">
             <div class="grid grid-cols-1 gap-4 md:gap-8 text-white">
                 <div>
+                    <div id="modal-tags" class="mb-2"></div>
                     <p id="modal-category" class="text-xs md:text-sm uppercase tracking-wider text-white/70 mb-2"></p>
                     <h2 id="modal-title" class="text-2xl md:text-4xl font-serif font-bold mb-3 md:mb-4"></h2>
                     <p id="modal-description" class="text-base md:text-lg mb-4 md:mb-6"></p>
@@ -815,86 +816,99 @@
                 description: "A assistente virtual inteligente desenvolvida pelo Seringal Lab para otimizar tarefas e fornecer informações rápidas no MPAC.",
                 background: { type: 'img', src: 'https://static.wixstatic.com/media/c96204_5d5e173f45b94cb2b2bd997e856e8c72~mv2.png' },
                 cardImages: ["assets/sl01.png"],
-                category: "Inovação na Gestão"
+                category: "Inovação Tecnológica",
+                url: "https://seringallab.mpac.mp.br/anton-ia"
             },
             {
                 title: "Simplifica",
-                description: "Iniciativa que promove o uso dos fundamentos da Linguagem Simples na comunicação interna e externa do MPAC.",
-                background: { type: 'img', src: 'assets/bg_seringal.jpg' },
+                description: "Promove o uso dos fundamentos da Linguagem Simples na comunicação interna e externa do MPAC.",
+                background: { type: 'img', src: 'https://static.wixstatic.com/media/c96204_dbd5378806da4cd5829411d19b378583~mv2.jpg' },
                 cardImages: ["assets/sl02.png"],
-                category: "Inovação na Gestão"
+                category: "Linguagem Simples",
+                url: "https://seringallab.mpac.mp.br/simplifica"
             },
             {
                 title: "Bora!",
-                description: "Capacita cidadãos para atuarem como agentes de fiscalização, fortalecendo a cidadania ativa e a gestão pública.",
+                description: "Conecta pessoas que precisam de ajuda a talentos dispostos a colaborar, com base em suas habilidades e interesses.",
                 background: { type: 'img', src: 'assets/bg_bora.jpg' },
                 cardImages: ["assets/sl03.png"],
-                category: "Inovação na Gestão"
+                category: "Inovação na Gestão",
+                tags: ["Premiação 3º lugar CNMP"],
+                url: "https://seringallab.mpac.mp.br/bora"
             },
             {
                 title: "Empodera",
-                description: "Metodologia inovadora que transforma dados públicos em ação efetiva contra irregularidades na administração pública.",
-                background: { type: 'img', src: 'assets/bg_seringal.jpg' },
+                description: "Capacita membros e servidores para o uso de novas ferramentas e metodologias de trabalho.",
+                background: { type: 'img', src: 'https://static.wixstatic.com/media/c96204_652f49b3aa894d56bc7e3f79327bc89d~mv2.jpg' },
                 cardImages: ["assets/sl04.png"],
-                category: "Inovação na Gestão"
+                category: "Inovação Educacional",
+                url: "https://seringallab.mpac.mp.br/empodera"
             },
             {
                 title: "Seringalpedia",
-                description: "Sistema de inteligência que identifica irregularidades ambientais e fundiárias, fortalecendo investigações e a defesa do meio ambiente.",
-                background: { type: 'img', src: 'assets/bg_seringal.jpg' },
+                description: "A enciclopédia colaborativa do SeringalLab, com base de conhecimento sobre inovação, tecnologia e projetos do Seringal Lab e MPAC.",
+                background: { type: 'img', src: 'https://static.wixstatic.com/media/c96204_9b55e9f8e36f44f5b7b40eb530edd997~mv2.jpg' },
                 cardImages: ["assets/sl05.png"],
-                category: "Inovação na Gestão"
+                category: "Cultura de Inovação  ",
+                url: "https://seringallab.mpac.mp.br/seringalpedia"
             },
             // Inovação Social
             {
                 title: "TranscreveAI",
-                description: "Projeto de apoio e inclusão para pessoas com Transtorno do Espectro Autista e suas famílias.",
-                background: { type: 'img', src: 'assets/bg_seringal.jpg' },
+                description: "Converta áudio e vídeo em texto de forma rápida e segura, com carimbos de tempo e geração de resumos.",
+                background: { type: 'img', src: 'https://static.wixstatic.com/media/c96204_6f441cb96afd4628af61b60e8930e515~mv2.png' },
                 cardImages: ["assets/sl06.png"],
-                category: "Inovação Social"
+                category: "Inovação Tecnológica",
+                url: "https://seringallab.mpac.mp.br/transcreveai"
             },
             {
                 title: "Robotiza",
-                description: "Iniciativa que incentiva a destinação de parte do Imposto de Renda para fundos de proteção à criança e ao adolescente.",
-                background: { type: 'img', src: 'assets/bg_seringal.jpg' },
+                description: "Implementa soluções de Automação Robótica de Processos (RPA) para tarefas manuais e repetitivas no MPAC. Menos tarefas repetitivas, mais tempo para o que importa.",
+                background: { type: 'img', src: 'https://static.wixstatic.com/media/c96204_7a00ab8ce94942d58d3ba3bd6894d97a~mv2.jpg' },
                 cardImages: ["assets/sl07.png"],
-                category: "Inovação Social"
+                category: "Inovação Tecnológica",
+                url: "https://seringallab.mpac.mp.br/robotiza"
             },
             {
                 title: "Seringal link",
-                description: "O direito à informação que salva vidas, combatendo a violência de gênero através da conscientização e do acesso à justiça.",
-                background: { type: 'img', src: 'assets/bg_seringal.jpg' },
+                description: "Transforme links longos em atalhos inteligentes com rastreamento de cliques e a análise de acesso.",
+                background: { type: 'img', src: 'https://static.wixstatic.com/media/c96204_4e18a5da95fe4573a2968d02bb97fa92~mv2.jpg' },
                 cardImages: ["assets/sl08.png"],
-                category: "Inovação Social"
+                category: "Inovação Tecnológica",
+                url: "https://seringallab.mpac.mp.br/seringal-link"
             },
             {
                 title: "Lab Itinerante",
-                description: "Fornecimento de produtos regionais para merenda escolar, valorizando agricultores familiares e a nutrição dos alunos.",
+                description: "Leva as ações e a cultura de inovação do SeringalLab para diferentes setores e comarcas do MPAC.",
                 background: { type: 'img', src: 'assets/bg_seringal.jpg' },
                 cardImages: ["assets/sl09.png"],
-                category: "Inovação Social"
+                category: "Cultura de Inovação",
+                url: "https://seringallab.mpac.mp.br/lab-itinerante"
             },
             // Inovação Tecnológica
             {
                 title: "MPAC Lab",
-                description: "Sistema Integrado de Gestão Estratégica que otimiza processos e a tomada de decisões no setor público.",
-                background: { type: 'img', src: 'assets/bg_seringal.jpg' },
+                description: "Plataforma online de capacitação em programação Python e conceitos de Inteligência Artificial.",
+                background: { type: 'img', src: 'https://static.wixstatic.com/media/c96204_feaf73e9e76d4efabb7ce243f9735616~mv2.png' },
                 cardImages: ["assets/sl10.png"],
-                category: "Inovação Tecnológica"
+                category: "Inovação Educacional",
+                url: "https://seringallab.mpac.mp.br/mpac-lab"
             },
             {
                 title: "Retiro Lab",
-                description: "Ferramenta tecnológica de monitoramento e alerta precoce para áreas de risco de enchentes.",
-                background: { type: 'img', src: 'assets/bg_seringal.jpg' },
+                description: "Utiliza metodologias ágeis e dinâmicas de grupo para acelerar a geração e prototipagem de ideias.",
+                background: { type: 'img', src: 'https://static.wixstatic.com/media/c96204_1b0e02cefa1f4a8d92228430403b8594~mv2.jpg' },
                 cardImages: ["assets/sl11.png"],
-                category: "Inovação Tecnológica"
+                category: "Cultura de Inovação",
+                url: "https://seringallab.mpac.mp.br/retiro-lab"
             },
             {
                 title: "Consultoria de Inovação",
-                description: "Sistema de coleta e análise de dados sobre feminicídios para subsidiar políticas de prevenção e combate.",
-                background: { type: 'img', src: 'assets/bg_seringal.jpg' },
+                description: "Transformando desafios em soluções inovadoras para o MPAC, com Diagnóstico aprofundado das problemáticas e oportunidades de inovação nas unidades",
+                background: { type: 'img', src: 'https://static.wixstatic.com/media/c96204_bb9886733edc4713ac27dabef0052065~mv2.jpg' },
                 cardImages: ["assets/sl12.png"],
-                category: "Inovação Tecnológica"
+                category: "Cultura de Inovação",
+                url: "https://seringallab.mpac.mp.br/consultoria-de-inovacao"
             }
         ];
 
@@ -981,13 +995,18 @@
             
             // Atualizar conteúdo
             const contentContainer = document.getElementById('content-container');
-            const isFinalist = displayedSlides.length > 0 && displayedSlides[currentSlide].isFinalist;
+            const currentSlideData = displayedSlides[currentSlide];
+            
+            const tagsHTML = currentSlideData.tags && currentSlideData.tags.length > 0
+                ? currentSlideData.tags.map(tag => `<div class="finalist-tag">${tag}</div>`).join('')
+                : '';
+
             contentContainer.innerHTML = `
                 <div class="content-slide">
-                    ${isFinalist ? '<div class="finalist-tag">⭐ Finalista Prêmio J.Ex</div>' : ''}
-                    <p class="text-sm font-medium tracking-wider mb-3 uppercase" style="color: #b9e62f;">${displayedSlides[currentSlide].category}</p>
-                    <h1 class="slide-title font-serif font-bold text-white">${displayedSlides[currentSlide].title}</h1>
-                    <p class="slide-description text-white">${displayedSlides[currentSlide].description}</p>
+                    ${tagsHTML}
+                    <p class="text-sm font-medium tracking-wider mb-3 uppercase" style="color: #b9e62f;">${currentSlideData.category}</p>
+                    <h1 class="slide-title font-serif font-bold text-white">${currentSlideData.title}</h1>
+                    <p class="slide-description text-white">${currentSlideData.description}</p>
                     <button class="relative btn-dynamic group overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 lg:px-8 lg:py-4 rounded-full text-sm lg:text-base">
                         <span class="absolute inset-0 rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 ease-out" style="background-color: #b3e127;"></span>
                         <span class="relative z-10">Explore Agora</span>
@@ -997,7 +1016,7 @@
             
             // Adicionar evento ao botão Explore Agora
             contentContainer.querySelector('button').addEventListener('click', () => {
-                openModal(displayedSlides[currentSlide]);
+                window.open(displayedSlides[currentSlide].url, '_blank');
             });
 
             // Aplicar animação de entrada
@@ -1084,6 +1103,17 @@
 
         function openModal(slide) {
   const overlay = document.getElementById('modal-overlay');
+
+  // Exibir tags se existirem
+  const tagsEl = document.getElementById('modal-tags');
+  if (slide.tags && slide.tags.length > 0) {
+    tagsEl.innerHTML = slide.tags.map(tag =>
+      `<span class="inline-block bg-yellow-500/90 text-black text-xs font-semibold px-3 py-1 rounded-full mr-2 mb-2">${tag}</span>`
+    ).join('');
+  } else {
+    tagsEl.innerHTML = '';
+  }
+
   document.getElementById('modal-category').textContent = slide.category;
   document.getElementById('modal-title').textContent = slide.title;
   document.getElementById('modal-description').textContent = slide.description;
